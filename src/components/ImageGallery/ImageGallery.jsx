@@ -2,6 +2,16 @@ import ImageCard from "./ImageCard/ImageCard";
 
 import css from "./ImageGallery.module.css";
 
-export default function ImageGallery() {
-  return <></>;
+export default function ImageGallery({ items }) {
+  return (
+    <>
+      <ul className={css.gallery}>
+        {items.map((item) => (
+          <li key={item.id} className={css.item}>
+            <ImageCard item={item} />
+          </li>
+        ))}
+      </ul>
+    </>
+  );
 }
