@@ -1,32 +1,35 @@
 import css from "./SearchBar.module.css";
+import React, { useState } from "react";
 
 export default function SearchBar({ onSearch }) {
-  const handleSubmit = (evt) => {
-    evt.preventDefault();
-    const form = evt.target;
-    const photo = form.elements.photo.value;
+  const [input, setInput] = useState("");
 
-    if (form.elements.photo.value.trim() === "") {
-      alert("Please enter search term!");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!input.trim()) {
+      toast.error("Будь ласка, введіть текст для пошуку зображень.");
       return;
     }
-
-    onSearch(photo);
-    form.reset();
+    onSearch(input.trim());
+    setInput("");
   };
 
   return (
     <>
       <header className={css.header}>
-        <form onSubmit={handleSubmit}>
+        <form className={css.form} onSubmit={handleSubmit}>
           <input
+            className={css.input}
             type="text"
-            name="photo"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
           />
-          <button type="submit">Search</button>
+          <button className={css.button} type="submit">
+            Search
+          </button>
         </form>
       </header>
     </>
