@@ -69,16 +69,16 @@ export default function App() {
   return (
     <div>
       <SearchBar onSearch={handleSubmit} />
-      <ImageGallery openModal={openModal} images={photos} />
+      <ImageGallery onImageClick={openModal} images={photos} />
       {loading && <Loader />}
       {error && (
         <ErrorMessage message={`Something went wrong! ${error.message}`} />
       )}
       {hasMorePhotos && <LoadMoreBtn onClick={handleLoadMore} />}
       <ImageModal
-        value={imageModal}
+        image={imageModal}
         isOpen={modalIsOpen}
-        onClose={closeModal}
+        onRequestClose={closeModal}
       />
     </div>
   );
