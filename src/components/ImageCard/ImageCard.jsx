@@ -1,7 +1,6 @@
 import css from "./ImageCard.module.css";
 
 export default function ImageCard({ image, onClick }) {
-  console.log(image);
   return (
     <div onClick={onClick} className={css.card} style={{ cursor: "pointer" }}>
       <img

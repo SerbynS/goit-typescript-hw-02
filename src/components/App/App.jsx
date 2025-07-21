@@ -28,7 +28,6 @@ export default function App() {
 
   const handleLoadMore = () => {
     setPage(page + 1);
-    console.log(page);
   };
 
   function closeModal() {
@@ -66,7 +65,6 @@ export default function App() {
     setHasMorePhotos(false);
   };
 
-  console.log(photos);
   return (
     <div>
       <SearchBar onSearch={handleSubmit} />

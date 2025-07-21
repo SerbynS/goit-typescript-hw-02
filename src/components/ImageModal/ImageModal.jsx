@@ -3,7 +3,6 @@ import Modal from "react-modal";
 
 export default function ImageModal({ isOpen, onRequestClose, image }) {
   if (!image || Object.keys(image).length === 0) return null;
-  console.log(typeof image);
 
   return (
     <Modal
