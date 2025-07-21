@@ -5,6 +5,7 @@ import Loader from "../Loader/Loader";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import SearchBar from "../SearchBar/SearchBar";
 import fetchData from "../../API";
+import toast, { Toaster } from "react-hot-toast";
 
 import { useState, useEffect } from "react";
 
