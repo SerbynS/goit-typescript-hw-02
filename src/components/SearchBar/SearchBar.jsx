@@ -1,5 +1,6 @@
 import css from "./SearchBar.module.css";
 import React, { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function SearchBar({ onSearch }) {
   const [input, setInput] = useState("");
@@ -17,9 +18,8 @@ export default function SearchBar({ onSearch }) {
   return (
     <>
       <header className={css.header}>
-        <form className={css.form} onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
-            className={css.input}
             type="text"
             autoComplete="off"
             autoFocus
