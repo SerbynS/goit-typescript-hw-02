@@ -1,10 +1,17 @@
 import ImageCard from "../ImageCard/ImageCard";
+import { Image, OpenModalType } from "../App/App.types";
 
 import css from "./ImageGallery.module.css";
 
-export default function ImageGallery({ images, onImageClick }) {
-  // console.log(images);
-  // console.log(onImageClick);
+type ImageGalleryProps = {
+  images: Image[];
+  onImageClick: OpenModalType;
+};
+
+export default function ImageGallery({
+  images,
+  onImageClick,
+}: ImageGalleryProps) {
   if (!images || images.length === 0) return null;
 
   return (

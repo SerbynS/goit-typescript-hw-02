@@ -1,6 +1,10 @@
 import css from "./ErrorMessage.module.css";
 
-export default function ErrorMessage() {
+type ErorProps = {
+  message: string;
+};
+
+export default function ErrorMessage({ message }: ErorProps) {
   return (
     <div className={css.errorMessage}>
       <p>Сталася помилка: {message || "Щось пішло не так..."}</p>

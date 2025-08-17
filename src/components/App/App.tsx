@@ -5,80 +5,111 @@ import Loader from "../Loader/Loader";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import SearchBar from "../SearchBar/SearchBar";
 import fetchData from "../../API";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 import { useState, useEffect } from "react";
+import type { Image, OpenModalType } from "./App.types";
 
 import css from "./App.module.css";
 
 export default function App() {
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [hasMorePhotos, setHasMorePhotos] = useState(false);
-  const [photos, setPhotos] = useState([]);
+  const [images, setImages] = useState<Image[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [imageModal, setImageModal] = useState({});
-
-  function openModal(photo) {
-    setImageModal(photo);
-    setIsOpen(true);
-  }
-
-  const handleLoadMore = () => {
-    setPage(page + 1);
-  };
-
-  function closeModal() {
-    setIsOpen(false);
-  }
+  const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalImage, setModalImage] = useState<{
+    src: string;
+    alt: string;
+  } | null>(null);
 
   useEffect(() => {
-    if (!search) {
-      return;
-    }
-    const getPhotos = async () => {
-      setLoading(true);
+    if (!query) return;
+
+    const fetchImages = async () => {
       try {
-        const response = await fetchData(search, page);
-        if (response.data.total === 0) {
-          toast("There is no matches by your query!");
-          return;
+        setLoading(true);
+        // setError(false);
+        const data = await fetchData(query, page);
+        const { results, total_pages, total } = data;
+        setTotal(total_pages);
+
+        if (total === 0) {
+          setError(
+            "No images found for this query. Please try a different one."
+          );
         }
-        setPhotos((prev) => [...prev, ...response.data.results]);
-        setHasMorePhotos(page < response.data.total_pages);
-      } catch (error) {
-        setError(error);
+
+        setImages((prev: Image[]) => [...prev, ...results]);
+      } catch {
+        setError("There was an error fetching the images");
       } finally {
         setLoading(false);
       }
     };
-    getPhotos();
-  }, [search, page]);
 
-  const handleSubmit = (query) => {
-    setSearch(query);
+    fetchImages();
+  }, [query, page]);
+
+  const handleSearch = (query: string) => {
+    setQuery(query);
     setPage(1);
-    setPhotos([]);
+    setImages([]);
     setError(null);
-    setHasMorePhotos(false);
+    setTotal(0);
   };
 
+  const handleMore = () => {
+    setPage(page + 1);
+  };
+
+  const handleOpenModal: OpenModalType = (src, alt) => {
+    setModalImage({ src, alt: alt ?? "No description" });
+    setModalIsOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const isLastPage = page === total;
+
   return (
-    <div>
-      <SearchBar onSearch={handleSubmit} />
-      <ImageGallery onImageClick={openModal} images={photos} />
+    <>
+      <SearchBar onSearch={handleSearch} />
+      <Toaster />
       {loading && <Loader />}
-      {error && (
-        <ErrorMessage message={`Something went wrong! ${error.message}`} />
+      {error && <ErrorMessage message={error} />}
+      {images.length > 0 && (
+        <ImageGallery images={images} onImageClick={handleOpenModal} />
       )}
-      {hasMorePhotos && <LoadMoreBtn onClick={handleLoadMore} />}
+      {images.length > 0 && !isLastPage && <LoadMoreBtn onClick={handleMore} />}
       <ImageModal
-        image={imageModal}
         isOpen={modalIsOpen}
-        onRequestClose={closeModal}
+        onRequestClose={handleCloseModal}
+        src={modalImage?.src ?? ""}
+        alt={modalImage?.alt ?? ""}
       />
-    </div>
+    </>
   );
 }
+
+//  return (
+//    <div>
+//      <SearchBar onSearch={handleSubmit} />
+//      <ImageGallery onImageClick={openModal} images={photos} />
+//      {loading && <Loader />}
+//      {error && (
+//        <ErrorMessage message={`Something went wrong! ${error.message}`} />
+//      )}
+//      {hasMorePhotos && <LoadMoreBtn onClick={handleLoadMore} />}
+//      <ImageModal
+//        src={imageModal?.src ?? ""}
+//        alt={imageModal?.alt ?? ""}
+//        isOpen={modalIsOpen}
+//        onRequestClose={closeModal}
+//      />
+//    </div>
+//  );

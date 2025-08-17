@@ -1,18 +1,26 @@
 import css from "./SearchBar.module.css";
+import { FormEvent } from "react";
+
 import React, { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
-export default function SearchBar({ onSearch }) {
-  const [input, setInput] = useState("");
+type SearchBarProps = {
+  onSearch: (value: string) => void;
+};
 
-  const handleSubmit = (e) => {
+export default function SearchBar({ onSearch }: SearchBarProps) {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!input.trim()) {
-      toast.error("Будь ласка, введіть текст для пошуку зображень.");
-      return;
+    const value = (
+      e.currentTarget.elements.namedItem("search") as HTMLInputElement
+    ).value.trim();
+
+    if (value === "") {
+      return toast.error("Write the request");
     }
-    onSearch(input.trim());
-    setInput("");
+
+    onSearch(value);
+    (e.target as HTMLFormElement).reset();
   };
 
   return (
@@ -22,10 +30,9 @@ export default function SearchBar({ onSearch }) {
           <input
             type="text"
             autoComplete="off"
+            name="search"
             autoFocus
             placeholder="Search images and photos"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
           />
           <button className={css.button} type="submit">
             Search
